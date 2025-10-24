@@ -7,21 +7,19 @@ Necesitas Visual Studio Code o alguna IDE (Entorno de Desarrollo Integrado) dond
 En esa IDE tenes que configurar tanto el Workspace  para que sea una carpeta que contenga a "Pong For 4"
 y un entorno virtual donde este instalado Python y Pygame
 Para Visual Studio Code (VSC)
-    Simplemente tenes que abrir primero el VSC en vez del juego
-    Despues en vez de seleccionar "Abrir un archivo", seleccionas "Abrir una carpeta"
-    Abris la carpeta que contenga a Pong For 4, este va a ser el Workspace, puede ser "Pong-For-4"
-    Despues para configurar el ambiente virtual o "Virtual Enviroment":
-        1. Abrir la paleta de comandos o "Command Palette" (Ctrl+Shift+P)
-        2. Escribir "Python: Create Enviroment" y seleccionar la opcion de "venv"
-        3. Si ya tenes una versión de Python instalada, te debería salir un Python Interpreter, seleccionas ese
-        Con eso deberías tener el entorno virtual, solo queda instalarle Pygame
-        5. Abris una terminal nueva presionando "Terminal" -> "New Terminal" (Ctrl+Shift+ñ)
-        De manera natural debería decir que la terminal es un powershell
-        6. Escribis "python -m pip install pygame"
+- Simplemente tenes que abrir primero el VSC en vez del juego
+- Despues en vez de seleccionar "Abrir un archivo", seleccionas "Abrir una carpeta"
+- Abris la carpeta que contenga a Pong For 4, este va a ser el Workspace, puede ser "Pong-For-4"
+- Despues para configurar el ambiente virtual o "Virtual Enviroment":
+    1. Abrir la paleta de comandos o "Command Palette" (Ctrl+Shift+P)
+    2. Escribir "Python: Create Enviroment" y seleccionar la opcion de "venv"
+    3. Si ya tenes una versión de Python instalada, te debería salir un Python Interpreter, seleccionas ese. Con eso deberías tener el entorno virtual, solo queda instalarle Pygame
+    5. Abris una terminal nueva presionando "Terminal" -> "New Terminal" (Ctrl+Shift+ñ). De manera natural debería decir que la terminal es un powershell
+    6. Escribis "python -m pip install pygame"
 Si no funciona puede ser que algo de la explicación este mal o algo me falto mencionar.
 Si es así, manda un feedback explicando la situación que es lo mismo que mandarme un mail
 
-IMPORTANTE
+IMPORTANTE: 
 Si queres cambiar la condición para que la ronda termine (para que termine cuando un jugador pierde por ejemplo),
 andá a "# Game_ending_variable" y cambia el numero a la cantidad de jugadores necesarios para que termine la ronda.
 Si pones para que la ronda termine apenas pierde alguien, te muestra un contador de rondas perdidas para el jugador perdedor
