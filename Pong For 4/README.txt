@@ -43,3 +43,6 @@ Este juego es de los primeros que hice, apenas empece a programar. Como consecue
 por eso tiene bugs que nunca fueron arreglados, ademnás nunca consideré en compartirlo con nadie. 
 Sin embargo, eso cambió cuando aprendí de Front-End y decidí hacer 1MB Games. En un futuro voy a actualizar el juego para que al menos este presentable
 como el primer juego de 1MB Games
+
+NOTAS:
+24/10: Se agrego un entorno virtual
