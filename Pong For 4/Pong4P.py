@@ -11,7 +11,9 @@ pygame.init()
 
 ### Screen variales ###
 
-screen = pygame.display.set_mode((1000, 1000))
+screen_height = 1000
+screen_width = 1000
+screen = pygame.display.set_mode((screen_height, screen_width))
 screen_rect = screen.get_rect()
 pygame.display.set_caption("Pong for 4")
 #background = pygame.draw.rect(screen, "Black", screen_rect)
