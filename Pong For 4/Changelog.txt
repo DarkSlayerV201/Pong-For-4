@@ -1,0 +1,4 @@
+27/10: Version 0.2
+- Añadida una lógica para que los cuerpos sean relativos a la resolución
+- Ahora la relación de aspecto puede cambiarse sin modificar (mucho) el gameplay.
+- Problema conocido: El movimiento de los cuerpos sigue siendo el mismo. Esto hace que en resoluciones chicas sea muy rapido y viceversa

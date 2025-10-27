@@ -11,14 +11,21 @@ pygame.init()
 
 ### Screen variales ###
 
+screen_ratio = 1 / 1
 screen_height = 1000
-screen_width = 1000
-screen = pygame.display.set_mode((screen_height, screen_width))
+screen_width = screen_height * screen_ratio
+screen = pygame.display.set_mode((screen_width, screen_height))
 screen_rect = screen.get_rect()
 pygame.display.set_caption("Pong for 4")
 #background = pygame.draw.rect(screen, "Black", screen_rect)
-instructions_font = pygame.font.Font("Pong For 4/Font/ci-gamedev.ttf", 20)
-start_font = pygame.font.Font("Pong For 4/Font/ci-gamedev.ttf", 50)
+if screen_ratio < 1:
+        start_font_size = screen_width / 20
+        instructions_font_size = screen_width / 50
+else:
+        start_font_size = screen_height / 20
+        instructions_font_size = screen_height / 50
+instructions_font = pygame.font.Font("Pong For 4/Font/ci-gamedev.ttf", int(instructions_font_size))
+start_font = pygame.font.Font("Pong For 4/Font/ci-gamedev.ttf", int(start_font_size))
 
 
 ### Functions ###
@@ -56,19 +63,11 @@ def reset_ball():
         ball.acceleration = get_random_float(2, 10, 1000)
         pass
 
-
-
-#def player_plays_not(gamer):
-#        print(f"{player} ha sido desactivado")
-#        pass
-
-
-
 ### Ball class ###
 class moving_object:
 
         def __init__(self, image, x, y):
-                self.surf = pygame.transform.scale((pygame.image.load(image)), (50, 50))
+                self.surf = pygame.transform.scale((pygame.image.load(image)), ((screen_width / 20), screen_height / 20)) #Ball size should be (50, 50) when screen is (1000, 1000)
                 self.rect = self.surf.get_rect(center = (x, y))
                 self.initial_speed_x = get_random_int(-5, 5)
                 self.initial_speed_y = get_random_int(-5, 5)
@@ -87,31 +86,33 @@ class player:
         
         def __init__(self, image, x, y, shield, axis, controls, color_value, plays, wins, loses):
                 
-                self.surf = pygame.transform.scale((pygame.image.load(image).convert_alpha()), (80, 80))
+                self.surf = pygame.transform.scale((pygame.image.load(image).convert_alpha()), ((screen_width / 12.5), screen_height / 12.5)) #Player size should be (80, 80) when screen is (1000, 1000)
                 self.rect = self.surf.get_rect(center = (x, y))
 
-                self.shield_surf = pygame.transform.scale((pygame.image.load(shield)), (20, 240))
-                self.death_barrier_surf = pygame.transform.scale((pygame.image.load("Pong For 4/Barriers/Death.png")), (20, screen_rect.width))
 
-                if axis == "left": 
-                        self.shield_rect = self.shield_surf.get_rect(midleft = (self.rect.right, y))
-                        self.death_barrier_rect = self.death_barrier_surf.get_rect(midleft = (self.rect.right, y))
+                if axis == "left" or axis == "right":
+                        self.shield_surf = pygame.transform.scale((pygame.image.load(shield)), ((screen_width / 50), (screen_height / (25 / 6)))) #Shield size should be (20, 240) when screen is (1000, 1000)
+                        self.death_barrier_surf = pygame.transform.scale((pygame.image.load("Pong For 4/Barriers/Death.png")), ((screen_width / 50), screen_height)) #Death barrier size should be (20, 1000) when screen is (1000, 1000)
 
-                elif axis == "right": 
-                        self.shield_rect = self.shield_surf.get_rect(midright = (self.rect.left, y))
-                        self.death_barrier_rect = self.death_barrier_surf.get_rect(midright = (self.rect.left, y))
+                        if axis == "left": 
+                                self.shield_rect = self.shield_surf.get_rect(midleft = (self.rect.right, y))
+                                self.death_barrier_rect = self.death_barrier_surf.get_rect(midleft = (self.rect.right, y))
 
-                elif axis == "top": 
-                        self.shield_surf = pygame.transform.rotate(self.shield_surf, 90)
-                        self.death_barrier_surf = pygame.transform.rotate(self.death_barrier_surf, 90)
-                        self.shield_rect = self.shield_surf.get_rect(midtop = (x, self.rect.bottom))
-                        self.death_barrier_rect = self.death_barrier_surf.get_rect(midtop = (x, self.rect.bottom))
+                        elif axis == "right": 
+                                self.shield_rect = self.shield_surf.get_rect(midright = (self.rect.left, y))
+                                self.death_barrier_rect = self.death_barrier_surf.get_rect(midright = (self.rect.left, y))
 
-                elif axis == "bottom": 
-                        self.shield_surf = pygame.transform.rotate(self.shield_surf, 90)
-                        self.death_barrier_surf = pygame.transform.rotate(self.death_barrier_surf, 90)
-                        self.shield_rect = self.shield_surf.get_rect(midbottom = (x, self.rect.top))
-                        self.death_barrier_rect = self.death_barrier_surf.get_rect(midbottom = (x, self.rect.top))
+                elif axis == "top" or axis == "bottom":
+                        self.shield_surf = pygame.transform.scale((pygame.image.load(shield)), ((screen_width / (25 / 6)), (screen_height / 50))) #Shield size should be (240, 20) when screen is (1000, 1000)
+                        self.death_barrier_surf = pygame.transform.scale((pygame.image.load("Pong For 4/Barriers/Death.png")), (screen_width, (screen_height / 50))) #Death barrier size should be (20, 1000) when screen is (1000, 1000)
+                        
+                        if axis == "top": 
+                                self.shield_rect = self.shield_surf.get_rect(midtop = (x, self.rect.bottom))
+                                self.death_barrier_rect = self.death_barrier_surf.get_rect(midtop = (x, self.rect.bottom))
+
+                        elif axis == "bottom":
+                                self.shield_rect = self.shield_surf.get_rect(midbottom = (x, self.rect.top))
+                                self.death_barrier_rect = self.death_barrier_surf.get_rect(midbottom = (x, self.rect.top))
 
                 else: print("Error al asignar clase") #Error
 
@@ -132,10 +133,10 @@ class player:
 
 
 ### Players
-white = player("Pong For 4/Players/White.png", 50, screen_rect.centery, "Pong For 4/Barriers/White.png", "left", "W/S", "White", 1, 0, 0)
-green = player("Pong For 4/Players/Green.png", (screen_rect.right - 50), screen_rect.centery, "Pong For 4/Barriers/Green.png", "right", "Num 8/Num 2", "Green", 1, 0, 0)
-red = player("Pong For 4/Players/Red.png", screen_rect.centerx, 50, "Pong For 4/Barriers/Red.png", "top", "N/M", "Red", 1, 0, 0)
-blue = player("Pong For 4/Players/Blue.png", screen_rect.centerx, (screen_rect.bottom - 50), "Pong For 4/Barriers/Blue.png", "bottom", "Left/Right", "Blue", 1, 0, 0)
+white = player("Pong For 4/Players/White.png", (screen_width / 10), screen_rect.centery, "Pong For 4/Barriers/White.png", "left", "W/S", "White", 1, 0, 0)
+green = player("Pong For 4/Players/Green.png", (screen_rect.right - (screen_width / 10)), screen_rect.centery, "Pong For 4/Barriers/Green.png", "right", "Num 8/Num 2", "Green", 1, 0, 0)
+red = player("Pong For 4/Players/Red.png", screen_rect.centerx, (screen_height / 10), "Pong For 4/Barriers/Red.png", "top", "N/M", "Red", 1, 0, 0)
+blue = player("Pong For 4/Players/Blue.png", screen_rect.centerx, (screen_rect.bottom - (screen_height / 10)), "Pong For 4/Barriers/Blue.png", "bottom", "Left/Right", "Blue", 1, 0, 0)
 player_list = [white, red, green, blue]
 
 
