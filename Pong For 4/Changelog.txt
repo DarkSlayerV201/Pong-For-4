@@ -2,3 +2,8 @@
 - Añadida una lógica para que los cuerpos sean relativos a la resolución
 - Ahora la relación de aspecto puede cambiarse sin modificar (mucho) el gameplay.
 - Problema conocido: El movimiento de los cuerpos sigue siendo el mismo. Esto hace que en resoluciones chicas sea muy rapido y viceversa
+
+28/10: Version 0.2.1
+- Borradas las lineas de código comentadas que estaban sin usar
+- Ahora hay mejores bases sobre las cuales construir
+- FALTA: Definir funciones para ayudar a la lectura y evitar repetición de código
