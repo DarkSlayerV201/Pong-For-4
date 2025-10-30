@@ -7,3 +7,7 @@
 - Borradas las lineas de código comentadas que estaban sin usar
 - Ahora hay mejores bases sobre las cuales construir
 - FALTA: Definir funciones para ayudar a la lectura y evitar repetición de código
+
+30/10: Version 0.2.2
+- Creadas funciones de clase para evitar repetición y mejorar modularidad
+- NUEVO: Ahora tenes un mensaje que dice 'Not playing' cuando deshabilitas un personaje

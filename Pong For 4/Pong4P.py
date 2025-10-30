@@ -74,36 +74,36 @@ ball = moving_object("Pong For 4/Ball/White ball.png", screen_rect.centerx, scre
 
 ### Player class ###
 class player:
-        def __init__(self, image, x, y, shield, axis, controls, color_value, plays, wins, loses):
+        def __init__(self, image, x, y, shield, position, controls, color_value, plays, wins, loses):
                 
                 self.surf = pygame.transform.scale((pygame.image.load(image).convert_alpha()), ((screen_width / 12.5), screen_height / 12.5)) #Player size should be (80, 80) when screen is (1000, 1000)
                 self.rect = self.surf.get_rect(center = (x, y))
 
-                if axis == "left" or axis == "right":
+                if position == "left" or position == "right":
                         self.shield_surf = pygame.transform.scale((pygame.image.load(shield)), ((screen_width / 50), (screen_height / (25 / 6)))) #Shield size should be (20, 240) when screen is (1000, 1000)
                         self.death_barrier_surf = pygame.transform.scale((pygame.image.load("Pong For 4/Barriers/Death.png")), ((screen_width / 50), screen_height)) #Death barrier size should be (20, 1000) when screen is (1000, 1000)
 
-                        if axis == "left": 
+                        if position == "left": 
                                 self.shield_rect = self.shield_surf.get_rect(midleft = (self.rect.right, y))
                                 self.death_barrier_rect = self.death_barrier_surf.get_rect(midleft = (self.rect.right, y))
 
-                        elif axis == "right": 
+                        elif position == "right": 
                                 self.shield_rect = self.shield_surf.get_rect(midright = (self.rect.left, y))
                                 self.death_barrier_rect = self.death_barrier_surf.get_rect(midright = (self.rect.left, y))
 
-                elif axis == "top" or axis == "bottom":
+                elif position == "top" or position == "bottom":
                         self.shield_surf = pygame.transform.scale((pygame.image.load(shield)), ((screen_width / (25 / 6)), (screen_height / 50))) #Shield size should be (240, 20) when screen is (1000, 1000)
                         self.death_barrier_surf = pygame.transform.scale((pygame.image.load("Pong For 4/Barriers/Death.png")), (screen_width, (screen_height / 50))) #Death barrier size should be (20, 1000) when screen is (1000, 1000)
                         
-                        if axis == "top": 
+                        if position == "top": 
                                 self.shield_rect = self.shield_surf.get_rect(midtop = (x, self.rect.bottom))
                                 self.death_barrier_rect = self.death_barrier_surf.get_rect(midtop = (x, self.rect.bottom))
 
-                        elif axis == "bottom":
+                        elif position == "bottom":
                                 self.shield_rect = self.shield_surf.get_rect(midbottom = (x, self.rect.top))
                                 self.death_barrier_rect = self.death_barrier_surf.get_rect(midbottom = (x, self.rect.top))
 
-                else: print("Error al asignar clase") #Error
+                else: print("Error al asignar posición") #Error
 
                 self.speed = 5
                 self.acceleration = 0
@@ -112,11 +112,73 @@ class player:
                 self.win_count = wins
                 self.lose_count = loses
                 self.color = color_value
+                self.position = position
+                if position in ["left", "right"]: self.movement_axis = "y"
+                elif position in ["top", "bottom"]: self.movement_axis = "x"
+                else: print("Error al asignar eje") #Error
 
                 self.instructions_surf = instructions_font.render(controls, False, color_value)
                 self.instructions_rect = self.instructions_surf.get_rect(center = (x, y))
 
                 pass
+
+        def stops_playing(self):
+                self.plays = 0
+                self.alive = 0
+                self.instructions_surf = instructions_font.render("Not playing", False, "Grey")
+                pass
+
+        def dies(self):
+                reset_ball()
+                self.alive = 0
+                global people_alive
+                people_alive -= 1
+                pass
+
+        def display_instructions(self):
+                screen.blit(self.instructions_surf, self.instructions_rect)
+                pass
+
+        def moves(self, direction):
+                if direction in ["up", "left"]: direction = -1
+                elif direction in ["down", "right"]: direction = 1
+                else: print("Error al asignar dirección") #Error
+                if self.movement_axis == "x":
+                        self.rect.x += direction * self.speed
+                        self.shield_rect.x += direction * self.speed
+                        self.acceleration = direction * 2
+                elif self.movement_axis == "y":
+                        self.rect.y += direction * self.speed
+                        self.shield_rect.y += direction * self.speed
+                        self.acceleration = direction * 2
+                else: print("Error al asignar eje") #Error
+                pass
+
+        def collides_with_ball(self):
+                if self.movement_axis == "x":
+                        ball.speed_y = -ball.speed_y
+                        ball.speed_x = ball.speed_x + self.acceleration
+                        if self.position == "top": ball.rect.top = self.shield_rect.bottom
+                        elif self.position == "bottom": ball.rect.bottom = self.shield_rect.top
+                elif self.movement_axis == "y":
+                        ball.speed_x = -ball.speed_x
+                        ball.speed_y = ball.speed_y + self.acceleration
+                        if self.position == "left": ball.rect.left = self.shield_rect.right
+                        elif self.position == "right": ball.rect.right = self.shield_rect.left
+                else: print("Error al asignar eje") #Error
+                pass
+
+        def reset_position(self):
+                self.alive = self.plays
+                if self.position == "left" or self.position == "right":
+                        self.rect.centery = screen_rect.centery
+                        self.shield_rect.centery = screen_rect.centery
+                elif self.position == "top" or self.position == "bottom":
+                        self.rect.centerx = screen_rect.centerx
+                        self.shield_rect.centerx = screen_rect.centerx
+                else: print("Error al asignar posición") #Error
+                pass
+
 
 ### Players
 white = player("Pong For 4/Players/White.png", (screen_width / 10), screen_rect.centery, "Pong For 4/Barriers/White.png", "left", "W/S", "White", 1, 0, 0)
@@ -134,36 +196,22 @@ score = 0
 
 ### Main loop ###
 while True:
-        ## Inputs
-        for event in pygame.event.get():
+        for event in pygame.event.get(): # Inputs #
                 if event.type == pygame.QUIT:
                         pygame.quit()
                         exit()
 
-                if event.type == pygame.MOUSEBUTTONDOWN and game_start == True:
-                        if white.instructions_rect.collidepoint(event.pos):
-                                white.plays = 0
-                                white.alive = 0
-                        if red.instructions_rect.collidepoint(event.pos):
-                                red.plays = 0
-                                red.alive = 0
-                        if green.instructions_rect.collidepoint(event.pos): 
-                                green.plays = 0
-                                green.alive = 0
-                        if blue.instructions_rect.collidepoint(event.pos): 
-                                blue.plays = 0
-                                blue.alive = 0
+                if event.type == pygame.MOUSEBUTTONDOWN and game_start == True: # Disabling players before game starts #
+                        for x in player_list: 
+                                if x.instructions_rect.collidepoint(event.pos): x.stops_playing()
         
         ## Keyboard and background ##
         keys = pygame.key.get_pressed()
         background = pygame.draw.rect(screen, "Black", screen_rect)
         
-        ## Start game
-        if game_start and game_active == False:
-                screen.blit(white.instructions_surf, white.instructions_rect)
-                screen.blit(green.instructions_surf, green.instructions_rect)
-                screen.blit(red.instructions_surf, red.instructions_rect)
-                screen.blit(blue.instructions_surf, blue.instructions_rect)
+        if game_start and game_active == False: ## Start screen ##
+                for x in player_list: x.display_instructions()
+                        
                 start_surf = start_font.render("Press Space to start", False, "Grey")
                 start_rect = start_surf.get_rect(center = (screen_rect.centerx, screen_rect.centery))
                 plays_surf = start_font.render("Press players to disable them", False, "Grey")
@@ -184,111 +232,32 @@ while True:
                 people_alive = white.alive + red.alive + green.alive + blue.alive
                 if people_playing == 1: score = display_score()
 
-                # White inputs #
-                white.acceleration = 0
+                # Player inputs #
+                for x in player_list: x.acceleration = 0
 
-                if white.alive == 1:
-                        if keys[pygame.K_s]: # White down
-                                white.rect.y += white.speed
-                                white.shield_rect.y += white.speed
-                                white.acceleration = 2
+                if white.alive == 1: # White inputs #
+                        if keys[pygame.K_s]: white.moves("down")
+                        if keys[pygame.K_w]: white.moves("up")
 
-                        if keys[pygame.K_w]: # White up
-                                white.rect.y -= white.speed
-                                white.shield_rect.y -= white.speed
-                                white.acceleration = -2
+                if green.alive == 1: # Green inputs #
+                        if keys[pygame.K_KP2]: green.moves("down")
+                        if keys[pygame.K_KP8]: green.moves("up")
 
-                # Green inputs #
-                green.acceleration = 0
+                if red.alive == 1: # Red inputs #
+                        if keys[pygame.K_m]: red.moves("right")
+                        if keys[pygame.K_n]: red.moves("left")
 
-                if green.alive == 1:
-                        if keys[pygame.K_KP2]: # Green down
-                                green.rect.y += green.speed
-                                green.shield_rect.y += green.speed
-                                green.acceleration = 2
-        
-                        if keys[pygame.K_KP8]: # Green up
-                                green.rect.y -= green.speed
-                                green.shield_rect.y -= green.speed
-                                green.acceleration = -2
+                if blue.alive == 1: # Blue inputs #
+                        if keys[pygame.K_RIGHT]: blue.moves("right")
+                        if keys[pygame.K_LEFT]: blue.moves("left")
 
-                # Red inputs #
-                red.acceleration = 0
+                
 
-                if red.alive == 1:
-                        if keys[pygame.K_m]: # Red right
-                                red.rect.x += red.speed
-                                red.shield_rect.x += red.speed
-                                red.acceleration = 2
-
-                        if keys[pygame.K_n]: # Red left
-                                red.rect.x -= red.speed
-                                red.shield_rect.x -= red.speed
-                                red.acceleration = -2
-
-                # Blue inputs #
-                blue.acceleration = 0
-
-                if blue.alive == 1:
-
-                        if keys[pygame.K_RIGHT]: # Blue right
-                                blue.rect.x += blue.speed
-                                blue.shield_rect.x += blue.speed
-                                blue.acceleration = 2
-
-                        if keys[pygame.K_LEFT]: # Blue left
-                                blue.rect.x -= blue.speed
-                                blue.shield_rect.x -= blue.speed
-                                blue.acceleration = -2
-
-                # Ball-players collisions #
-                if green.alive == 1:
-                        if ball.rect.colliderect(green.shield_rect): 
-                                ball.speed_x = -ball.speed_x
-                                ball.speed_y = ball.speed_y + green.acceleration
-                                ball.rect.right = green.shield_rect.left
-
-                else:
-                        if ball.rect.colliderect(green.death_barrier_rect):
-                                ball.speed_x = -ball.speed_x
-                                ball.speed_y = ball.speed_y
-                                ball.rect.right = green.death_barrier_rect.left
-
-                if white.alive == 1:
-                        if ball.rect.colliderect(white.shield_rect):
-                                ball.speed_x = -ball.speed_x
-                                ball.speed_y = ball.speed_y + white.acceleration
-                                ball.rect.left = white.shield_rect.right
-
-                else: 
-                        if ball.rect.colliderect(white.death_barrier_rect):
-                                ball.speed_x = -ball.speed_x
-                                ball.speed_y = ball.speed_y
-                                ball.rect.left = white.death_barrier_rect.right
-        
-                if red.alive == 1:
-                        if ball.rect.colliderect(red.shield_rect): 
-                                ball.speed_y = -ball.speed_y
-                                ball.speed_x = ball.speed_x + red.acceleration
-                                ball.rect.top = red.shield_rect.bottom
-
-                else: 
-                        if ball.rect.colliderect(red.death_barrier_rect):
-                                ball.speed_y = -ball.speed_y
-                                ball.speed_x = ball.speed_x 
-                                ball.rect.top = red.death_barrier_rect.bottom
-        
-                if blue.alive == 1:
-                        if ball.rect.colliderect(blue.shield_rect): 
-                                ball.speed_y = -ball.speed_y
-                                ball.speed_x = ball.speed_x + blue.acceleration
-                                ball.rect.bottom = blue.shield_rect.top
-
-                else:
-                        if ball.rect.colliderect(blue.death_barrier_rect):
-                                ball.speed_y = -ball.speed_y
-                                ball.speed_x = ball.speed_x 
-                                ball.rect.bottom = blue.death_barrier_rect.top
+                for x in player_list: # Ball-players collisions #
+                        if x.alive == 1:
+                                if ball.rect.colliderect(x.shield_rect): x.collides_with_ball()
+                        else:
+                                if ball.rect.colliderect(x.death_barrier_rect): x.collides_with_ball()
 
                 # Ball acceleration and movement #
                 if ball.speed_x > 0: ball.speed_x += ball.acceleration
@@ -303,45 +272,17 @@ while True:
                 ball.rect.y += ball.speed_y
 
                 # Ball-screen collisions #
-                if ball.rect.top <= screen_rect.top: 
-                        reset_ball()
-                        red.alive = 0 # Red dies
-                        people_alive -= 1
-
-                if ball.rect.bottom >= screen_rect.bottom: 
-                        reset_ball()
-                        blue.alive = 0 # Blue dies
-                        people_alive -= 1
-
-                if ball.rect.right >= screen_rect.right:
-                        reset_ball()
-                        green.alive = 0 # Green dies
-                        people_alive -= 1
-
-                if ball.rect.left <= screen_rect.left:
-                        reset_ball()
-                        white.alive = 0 # White dies
-                        people_alive -= 1
-
+                if ball.rect.top <= screen_rect.top: red.dies()
+                if ball.rect.bottom >= screen_rect.bottom: blue.dies()
+                if ball.rect.right >= screen_rect.right: green.dies()
+                if ball.rect.left <= screen_rect.left: white.dies()
 
                 # Screen blit #
-        
-                screen.blit(white.surf, white.rect)
-                screen.blit(white.shield_surf, white.shield_rect)
-                if white.alive == False: screen.blit(white.death_barrier_surf, white.death_barrier_rect)
 
-                screen.blit(green.surf, green.rect)
-                screen.blit(green.shield_surf, green.shield_rect)
-                if green.alive == False: screen.blit(green.death_barrier_surf, green.death_barrier_rect)
-
-                screen.blit(red.surf, red.rect)
-                screen.blit(red.shield_surf, red.shield_rect)
-                if red.alive == False: screen.blit(red.death_barrier_surf, red.death_barrier_rect)
-
-                screen.blit(blue.surf, blue.rect)
-                screen.blit(blue.shield_surf, blue.shield_rect)
-                if blue.alive == False: screen.blit(blue.death_barrier_surf, blue.death_barrier_rect)
-
+                for x in player_list:
+                        screen.blit(x.shield_surf, x.shield_rect)
+                        screen.blit(x.surf, x.rect)
+                        if x.alive == False: screen.blit(x.death_barrier_surf, x.death_barrier_rect)
                 screen.blit(ball.surf, ball.rect)
 
                 # Game_ending_variables #
@@ -386,23 +327,7 @@ while True:
 
                 if keys[pygame.K_SPACE]:
                         game_active = True
-
-                        white.alive = white.plays
-                        white.rect.centery = screen_rect.centery
-                        white.shield_rect.centery = screen_rect.centery
-
-                        red.alive = red.plays
-                        red.rect.centerx = screen_rect.centerx
-                        red.shield_rect.centerx = screen_rect.centerx
-
-                        green.alive = green.plays
-                        green.rect.centery = screen_rect.centery
-                        green.shield_rect.centery = screen_rect.centery
-
-                        blue.alive = blue.plays
-                        blue.rect.centerx = screen_rect.centerx
-                        blue.shield_rect.centerx = screen_rect.centerx
-
+                        for x in player_list: x.reset_position()
                         people_alive = white.alive + red.alive + green.alive + blue.alive
                         start_time = pygame.time.get_ticks()
 
