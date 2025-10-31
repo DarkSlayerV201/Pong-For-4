@@ -1,13 +1,32 @@
+# Pong For 4
+# 
+# Para cambiar la resolución:
+# Tenes que modificar la variable 'screen_height' al alto de tu pantalla. Tendría que quedar algo como 
+# screen_height = <Alto de pantalla>
+# Despues modificas 'screen_ratio' al aspecto de tu pantalla. En la mayoria de monitores es de 16/9 
+# 
+# Por ejemplo, para poner una resolución de 1920*1080 tendrias que poner
+# screen_height = 1080 
+# screen_ratio = 16/9
+# 
+# Pueden deformarse más o menos los elementos del juego, pero es simplemente visual.
+# De todos modos, con dejar la relación predeterminada debería ser más que suficiente #
+
+screen_height = 1000 # Altura de la pantalla: Valor predeterminado: 1000
+screen_ratio = 1 / 1 # Relación de aspecto de la pantalla: Valor predeterminado: 1/1
+
 import pygame
 from sys import exit
 from random import randint
 
 pygame.init()
 
+
+
+
+
 ### Screen variales ###
 
-screen_ratio = 1 / 1
-screen_height = 800
 screen_width = screen_height * screen_ratio
 screen = pygame.display.set_mode((screen_width, screen_height))
 screen_rect = screen.get_rect()
@@ -31,14 +50,13 @@ def display_score():
         screen.blit(score_surf, score_rect) #Score_variable
         return current_time
 
-def wins(win_count, round_result):
-        rounds_won = win_count + round_result
-        return rounds_won
-
 def get_random_int(minimum, maximum):
         getting_number = True
         while getting_number:
-                number = randint(minimum, maximum)
+                try: number = randint(int(minimum), int(maximum))
+                except ValueError: 
+                        number == 0
+                        print("Error al generar número entero aleatorio") #Error
                 if number == 0: getting_number = True
                 else: getting_number = False
         return number
@@ -48,26 +66,29 @@ def get_random_float(minimum_int, maximum_int, decimals):
         float_number = number / decimals
         return float_number
 
-def reset_ball():
-        ball.rect.center = screen_rect.center
-        ball.initial_speed_x = get_random_int(-5, 5)
-        ball.initial_speed_y = get_random_int(-5, 5)
-        ball.speed_x = ball.initial_speed_x
-        ball.speed_y = ball.initial_speed_y
-        ball.acceleration = get_random_float(2, 10, 1000)
-        pass
-
 ### Ball class ###
 class moving_object:
         def __init__(self, image, x, y):
                 self.surf = pygame.transform.scale((pygame.image.load(image)), ((screen_width / 20), screen_height / 20)) #Ball size should be (50, 50) when screen is (1000, 1000)
                 self.rect = self.surf.get_rect(center = (x, y))
-                self.initial_speed_x = get_random_int(-5, 5)
-                self.initial_speed_y = get_random_int(-5, 5)
+                self.initial_speed_x = get_random_int(-(screen_width / 200), (screen_width / 200))
+                self.initial_speed_y = get_random_int(-(screen_height / 200), (screen_height / 200))
                 self.speed_x = self.initial_speed_x
                 self.speed_y = self.initial_speed_y
-                self.acceleration = get_random_float(2, 10, 1000)
+                self.acceleration_y = get_random_float((screen_height / 500), (screen_height / 100), 1000)
+                self.acceleration_x = self.acceleration_y * screen_ratio
                 pass
+
+        def reset(self):
+                self.rect.center = screen_rect.center
+                self.initial_speed_x = get_random_int(-(screen_width / 200), (screen_width / 200))
+                self.initial_speed_y = get_random_int(-(screen_height / 200), (screen_height / 200))
+                self.speed_x = ball.initial_speed_x
+                self.speed_y = ball.initial_speed_y
+                self.acceleration_y = get_random_float((screen_height / 500), (screen_height / 100), 1000)
+                self.acceleration_x = self.acceleration_y * screen_ratio
+                pass
+
 
 ball = moving_object("Pong For 4/Ball/White ball.png", screen_rect.centerx, screen_rect.centery)
 
@@ -105,7 +126,13 @@ class player:
 
                 else: print("Error al asignar posición") #Error
 
-                self.speed = 5
+                if position in ["left", "right"]: self.movement_axis = "y"
+                elif position in ["top", "bottom"]: self.movement_axis = "x"
+                else: print("Error al asignar eje") #Error
+
+                if self.movement_axis == "x": self.speed = screen_width / 200 #Speed should be 5 when screen is 1000x1000
+                elif self.movement_axis == "y": self.speed = screen_height / 200
+                else: print("Error al asignar velocidad") #Error
                 self.acceleration = 0
                 self.plays = plays
                 self.alive = self.plays
@@ -113,30 +140,24 @@ class player:
                 self.lose_count = loses
                 self.color = color_value
                 self.position = position
-                if position in ["left", "right"]: self.movement_axis = "y"
-                elif position in ["top", "bottom"]: self.movement_axis = "x"
-                else: print("Error al asignar eje") #Error
-
-                self.instructions_surf = instructions_font.render(controls, False, color_value)
-                self.instructions_rect = self.instructions_surf.get_rect(center = (x, y))
-
+                self.instructions = text_box(controls, x, y, int(instructions_font_size), color_value)
                 pass
 
         def stops_playing(self):
                 self.plays = 0
                 self.alive = 0
-                self.instructions_surf = instructions_font.render("Not playing", False, "Grey")
+                self.instructions.surf = self.instructions.font.render("Not playing", False, "Grey")
                 pass
 
         def dies(self):
-                reset_ball()
+                ball.reset()
                 self.alive = 0
                 global people_alive
                 people_alive -= 1
                 pass
 
         def display_instructions(self):
-                screen.blit(self.instructions_surf, self.instructions_rect)
+                screen.blit(self.instructions.surf, self.instructions.rect)
                 pass
 
         def moves(self, direction):
@@ -146,11 +167,11 @@ class player:
                 if self.movement_axis == "x":
                         self.rect.x += direction * self.speed
                         self.shield_rect.x += direction * self.speed
-                        self.acceleration = direction * 2
+                        self.acceleration = direction * (screen_width / 500) #Acceleration should be 2 when screen is 1000x1000
                 elif self.movement_axis == "y":
                         self.rect.y += direction * self.speed
                         self.shield_rect.y += direction * self.speed
-                        self.acceleration = direction * 2
+                        self.acceleration = direction * (screen_height / 500) #Acceleration should be 2 when screen is 1000x1000
                 else: print("Error al asignar eje") #Error
                 pass
 
@@ -179,12 +200,75 @@ class player:
                 else: print("Error al asignar posición") #Error
                 pass
 
+        def display_result(self, result):
+                if result == "win": result_count = f"Rounds won: {self.win_count}"
+                elif result == "lose": result_count = f"Rounds lost: {self.lose_count}"
+                result_box = text_box(result_count, game_over_box.rect.centerx, screen_rect.centery, int(start_font_size), self.color)
+                result_box.rect.top = game_over_box.rect.bottom + 20
+                screen.blit(result_box.surf, result_box.rect)
+
+                player_position = self.surf.get_rect(midtop = (result_box.rect.centerx, (result_box.rect.bottom + 20)))
+                screen.blit(self.surf, player_position)
+                pass
+
+        def check_border_collision(self):
+                if self.shield_rect.top <= screen_rect.top:
+                        self.shield_rect.top = screen_rect.top
+                        self.rect.centery = self.shield_rect.centery
+                if self.shield_rect.bottom >= screen_rect.bottom:
+                        self.shield_rect.bottom = screen_rect.bottom
+                        self.rect.centery = self.shield_rect.centery
+                if self.shield_rect.left <= screen_rect.left:
+                        self.shield_rect.left = screen_rect.left
+                        self.rect.centerx = self.shield_rect.centerx
+                if self.shield_rect.right >= screen_rect.right:
+                        self.shield_rect.right = screen_rect.right
+                        self.rect.centerx = self.shield_rect.centerx
+                pass
+
+class text_box:
+        def __init__(self, text, x, y, font_size, color_value, display = False):
+                self.font = pygame.font.Font("Pong For 4/Font/ci-gamedev.ttf", font_size)
+                self.surf = self.font.render(text, False, color_value)
+                self.rect = self.surf.get_rect(center = (x, y))
+                self.display = display
+                if self.display == True: screen.blit(self.surf, self.rect)
+                pass
 
 ### Players
-white = player("Pong For 4/Players/White.png", (screen_width / 10), screen_rect.centery, "Pong For 4/Barriers/White.png", "left", "W/S", "White", 1, 0, 0)
-green = player("Pong For 4/Players/Green.png", (screen_rect.right - (screen_width / 10)), screen_rect.centery, "Pong For 4/Barriers/Green.png", "right", "Num 8/Num 2", "Green", 1, 0, 0)
-red = player("Pong For 4/Players/Red.png", screen_rect.centerx, (screen_height / 10), "Pong For 4/Barriers/Red.png", "top", "N/M", "Red", 1, 0, 0)
-blue = player("Pong For 4/Players/Blue.png", screen_rect.centerx, (screen_rect.bottom - (screen_height / 10)), "Pong For 4/Barriers/Blue.png", "bottom", "Left/Right", "Blue", 1, 0, 0)
+white = player(
+        "Pong For 4/Players/White.png", # Player image
+        (screen_width / 10), screen_rect.centery, # Position
+        "Pong For 4/Barriers/White.png", # Shield image
+        "left", "W/S", # Position and controls
+        "White", # Color
+        1, 0, 0 # Plays, wins, loses
+) 
+green = player(
+        "Pong For 4/Players/Green.png", 
+        (screen_rect.right - (screen_width / 10)), screen_rect.centery, 
+        "Pong For 4/Barriers/Green.png", 
+        "right", "Num 8/Num 2", 
+        "Green", 
+        1, 0, 0
+)
+red = player(
+        "Pong For 4/Players/Red.png", 
+        screen_rect.centerx, (screen_height / 10), 
+        "Pong For 4/Barriers/Red.png", 
+        "top", "N/M", 
+        "Red", 
+        1, 0, 0
+)
+blue = player(
+        "Pong For 4/Players/Blue.png", 
+        screen_rect.centerx, 
+        (screen_rect.bottom - (screen_height / 10)), 
+        "Pong For 4/Barriers/Blue.png", 
+        "bottom", "Left/Right", 
+        "Blue", 
+        1, 0, 0
+)
 player_list = [white, red, green, blue]
 
 ### Game variables ###
@@ -203,7 +287,7 @@ while True:
 
                 if event.type == pygame.MOUSEBUTTONDOWN and game_start == True: # Disabling players before game starts #
                         for x in player_list: 
-                                if x.instructions_rect.collidepoint(event.pos): x.stops_playing()
+                                if x.instructions.rect.collidepoint(event.pos): x.stops_playing()
         
         ## Keyboard and background ##
         keys = pygame.key.get_pressed()
@@ -211,13 +295,23 @@ while True:
         
         if game_start and game_active == False: ## Start screen ##
                 for x in player_list: x.display_instructions()
-                        
-                start_surf = start_font.render("Press Space to start", False, "Grey")
-                start_rect = start_surf.get_rect(center = (screen_rect.centerx, screen_rect.centery))
-                plays_surf = start_font.render("Press players to disable them", False, "Grey")
-                plays_rect = plays_surf.get_rect(midtop = (start_rect.centerx, (start_rect.bottom + 20)))
-                screen.blit(start_surf, start_rect)
-                screen.blit(plays_surf, plays_rect)
+
+                start_text_box = text_box(
+                        "Press Space to start", 
+                        screen_rect.centerx, 
+                        screen_rect.centery, 
+                        int(start_font_size), 
+                        "Grey", 
+                        True
+                )
+                plays_text_box = text_box(
+                        "Press players to disable them", 
+                        start_text_box.rect.centerx, 
+                        (start_text_box.rect.bottom + 20), 
+                        int(start_font_size), 
+                        "Grey", 
+                        True
+                )
 
                 if keys[pygame.K_SPACE]: 
                         game_start = False
@@ -254,18 +348,20 @@ while True:
                 
 
                 for x in player_list: # Ball-players collisions #
+                        x.check_border_collision()
                         if x.alive == 1:
                                 if ball.rect.colliderect(x.shield_rect): x.collides_with_ball()
                         else:
                                 if ball.rect.colliderect(x.death_barrier_rect): x.collides_with_ball()
 
+
                 # Ball acceleration and movement #
-                if ball.speed_x > 0: ball.speed_x += ball.acceleration
-                elif ball.speed_x < 0: ball.speed_x -= ball.acceleration
+                if ball.speed_x > 0: ball.speed_x += ball.acceleration_x
+                elif ball.speed_x < 0: ball.speed_x -= ball.acceleration_x
                 else: print("Error: ball.speed_x == 0")
                 
-                if ball.speed_y > 0: ball.speed_y += ball.acceleration
-                elif ball.speed_y < 0: ball.speed_y -= ball.acceleration
+                if ball.speed_y > 0: ball.speed_y += ball.acceleration_y
+                elif ball.speed_y < 0: ball.speed_y -= ball.acceleration_y
                 else: print("Error: ball.speed_y == 0")
 
                 ball.rect.x += ball.speed_x 
@@ -292,42 +388,40 @@ while True:
                                 if x.alive == 0 and x.plays == 1: x.lose_count += 1
                         game_active = False
 
-                elif people_playing == 1 and people_alive == 0:
-                        game_active = False
+                elif people_playing == 1 and people_alive == 0: game_active = False
 
         ## End game results ##
         if game_active == False and game_start == False:
-                game_over_surf = start_font.render("Press Space to start again", False, "Yellow")
-                game_over_rect = game_over_surf.get_rect(center = (screen_rect.centerx, screen_rect.centery))
-                screen.blit(game_over_surf, game_over_rect)
-                final_score_surf = start_font.render(f"Your score: {score}", False, "Yellow")
-                final_score_rect = final_score_surf.get_rect (midbottom = (screen_rect.centerx, (game_over_rect.top - 20)))
-                if people_playing == 1: screen.blit(final_score_surf, final_score_rect) #Score_variable
+                
+                game_over_box = text_box(
+                        "Press Space to start again", 
+                        screen_rect.centerx, 
+                        screen_rect.centery, 
+                        int(start_font_size), "Yellow", True
+                )
+                if people_playing == 1: final_score_box = text_box(
+                        f"Your score: {score}", 
+                        screen_rect.centerx, 
+                        (game_over_box.rect.top - 20), 
+                        int(start_font_size), 
+                        "Yellow", 
+                        True
+                )
 
                 # Player winning #
                 if people_alive == 1:
                         for x in player_list:
-                                if x.alive == 1:
-                                        winner_surf = start_font.render(f"Rounds won: {x.win_count}", False, x.color)
-                                        winner_rect = winner_surf.get_rect(midtop = (game_over_rect.centerx, (game_over_rect.bottom + 20)))
-                                        screen.blit(winner_surf, winner_rect)
-                                        player_winner_rect = x.surf.get_rect(midtop = (winner_rect.centerx, (winner_rect.bottom + 20)))
-                                        screen.blit(x.surf, player_winner_rect)
+                                if x.alive == 1: x.display_result("win")
 
                 # Player losing #
-                if people_alive > 1:
+                if people_alive == people_playing - 1 and people_alive != 1 and people_playing != 1:
                         for x in player_list:
-                                if x.plays == 1 and x.alive == 0:
-                                        loser_surf = start_font.render(f"Rounds lost: {x.lose_count}", False, x.color)
-                                        loser_rect = loser_surf.get_rect(midtop = (game_over_rect.centerx, (game_over_rect.bottom + 20)))
-                                        screen.blit(loser_surf, loser_rect)
-                                        player_loser_rect = x.surf.get_rect(midtop = (loser_rect.centerx, (loser_rect.bottom + 20)))
-                                        screen.blit(x.surf, player_loser_rect)
-
+                                if x.plays == 1 and x.alive == 0: x.display_result("lose")
 
                 if keys[pygame.K_SPACE]:
                         game_active = True
                         for x in player_list: x.reset_position()
+                        ball.reset()
                         people_alive = white.alive + red.alive + green.alive + blue.alive
                         start_time = pygame.time.get_ticks()
 

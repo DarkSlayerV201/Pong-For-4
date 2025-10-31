@@ -1,7 +1,7 @@
 Pong For 4 (WIP)
 
 ESTAS LEYENDO EL README RELACIONADO AL GITHUB
-PARA VER INSTALACION ES RECOMENDABLE VER EL 'README.txt' DENTRO DE LA CARPETA 'Pong For 4'
+PARA VER INSTALACION ES RECOMENDABLE VER EL 'INSTALLATION.txt' DENTRO DE LA CARPETA 'Pong For 4'
 
 DESCRIPCION
 Este juego es de los primeros que hice, apenas empece a programar. Como consecuencia de eso quedó medio abandonado, 
@@ -15,7 +15,6 @@ PROBLEMAS CONOCIDOS
 - Es muy simple, le faltan mecanicas para hacerlo divertido
 - Le falta un menu para controlar opciones
 - Le falta una manera de salir del juego
-- Los jugadores pueden salirse de la pantalla
 
 PROBLEMAS POTENCIALES
 - La resolución es estática, lo cual no es ideal
@@ -31,4 +30,4 @@ PROBLEMAS FUTUROS
 - Tener un solo modo de juego puede ser aburrido después de un tiempo
 - La falta de un modo de juego diseñado para menos jugadores podría dar menos accesibilidad para grupos más chicos de jugadores
 
-Ultima versión: 0.2.1 (28/10/2025)
+Ultima versión: 0.3 (31/10/2025)

@@ -1,13 +1,19 @@
-27/10: Version 0.2
-- Añadida una lógica para que los cuerpos sean relativos a la resolución
-- Ahora la relación de aspecto puede cambiarse sin modificar (mucho) el gameplay.
-- Problema conocido: El movimiento de los cuerpos sigue siendo el mismo. Esto hace que en resoluciones chicas sea muy rapido y viceversa
+31/10: Version 0.3
+- Mejoras a nivel de código
+- NUEVO: Ahora los personajes no se pueden salir de la pantalla
+- Ajustadas medidas y velocidades a la resolución: Ahora se puede cambiar la resolución y la relación de aspecto sin problemas
+- FALTA: Que la resolución y los ajustes se puedan acceder desde afuera del código
+
+30/10: Version 0.2.2
+- Creadas funciones de clase para evitar repetición y mejorar modularidad
+- NUEVO: Ahora tenes un mensaje que dice 'Not playing' cuando deshabilitas un personaje
 
 28/10: Version 0.2.1
 - Borradas las lineas de código comentadas que estaban sin usar
 - Ahora hay mejores bases sobre las cuales construir
 - FALTA: Definir funciones para ayudar a la lectura y evitar repetición de código
 
-30/10: Version 0.2.2
-- Creadas funciones de clase para evitar repetición y mejorar modularidad
-- NUEVO: Ahora tenes un mensaje que dice 'Not playing' cuando deshabilitas un personaje
+27/10: Version 0.2
+- Añadida una lógica para que los cuerpos sean relativos a la resolución
+- Ahora la relación de aspecto puede cambiarse sin modificar (mucho) el gameplay.
+- Problema conocido: El movimiento de los cuerpos sigue siendo el mismo. Esto hace que en resoluciones chicas sea muy rapido y viceversa
