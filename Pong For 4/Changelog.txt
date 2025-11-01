@@ -1,3 +1,6 @@
+01/11: Version 0.3.0.1
+- Añadido 'settings.json' para poder acceder con mayor facilidad a ciertos ajustes y variables
+
 31/10: Version 0.3
 - Mejoras a nivel de código
 - NUEVO: Ahora los personajes no se pueden salir de la pantalla

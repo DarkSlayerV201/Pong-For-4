@@ -20,7 +20,24 @@ Para Visual Studio Code (VSC)
 Si no funciona puede ser que algo de la explicación este mal o algo me falto mencionar.
 Si es así, manda un feedback explicando la situación que es lo mismo que mandarme un mail
 
-IMPORTANTE
-Si queres cambiar la condición para que la ronda termine (para que termine cuando un jugador pierde por ejemplo),
-andá a "# Game_ending_variable" y cambia el numero a la cantidad de jugadores necesarios para que termine la ronda.
-Si pones para que la ronda termine apenas pierde alguien, te muestra un contador de rondas perdidas para el jugador perdedor
+CONFIGURACIÓN
+Para cambiar la configuración tenes que entrar a "settings.json", luego:
+    Para la resolucion:
+        Tenes que modificar la variable 'screen_height' al alto de tu pantalla. Tendría que quedar algo como 
+            "screen_height" = <Alto de pantalla>,
+        Despues modificas las variables de 'screen_ratio' para generar la division de la relación deseada.
+            "numerator" : <El numerador> ,
+            "denominator" : <El denominador>
+        En la mayoria de monitores es de 16/9 pero el juego esta pensado para 1/1.
+        Aun así, cambiar la relación de aspecto no cambia el gameplay, solo puede deformar los cuerpos.
+
+        Por ejemplo, para tener una resolución de 1920*1080
+            "screen_height" : 1080,
+            "screen_ratio" : {
+                "numerator" : 16,
+                "denominator : 9
+            },
+
+    Para definir cuantos jugadores necesitan estar para terminar la partida:
+        Tenes que modificar la variable 'players_needed_to_end_match' a los jugadores desados. Quedaría algo como
+        "players_needed_to_end_match" : <Jugadores necesarios para terminar pantalla>,

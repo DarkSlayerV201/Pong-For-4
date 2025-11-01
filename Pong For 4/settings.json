@@ -1,0 +1,33 @@
+{
+    "screen_height" : 1000,
+    "screen_ratio" : {
+        "numerator" : 1.0,
+        "denominator" : 1.0
+    },
+    "players_needed_to_end_match" : 1,
+
+    "font" : "Pong For 4/Font/ci-gamedev.ttf",
+    "ball_image" : "Pong For 4/Ball/White ball.png",
+    "players" : {
+        "white" : {
+            "color": "White",
+            "image" : "Pong For 4/Players/White.png",
+            "shield" : "Pong For 4/Barriers/White.png"
+        },
+        "green" : {
+            "color": "Green",
+            "image" : "Pong For 4/Players/Green.png",
+            "shield" : "Pong For 4/Barriers/Green.png"
+        },
+        "red" : {
+            "color": "Red",
+            "image" : "Pong For 4/Players/Red.png",
+            "shield" : "Pong For 4/Barriers/Red.png"
+        },
+        "blue" : {
+            "color": "Blue",
+            "image" : "Pong For 4/Players/Blue.png",
+            "shield" : "Pong For 4/Barriers/Blue.png"
+        }
+    }
+}

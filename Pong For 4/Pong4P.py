@@ -1,44 +1,32 @@
-# Pong For 4
+# Pong For 4 
 # 
-# Para cambiar la resolución:
-# Tenes que modificar la variable 'screen_height' al alto de tu pantalla. Tendría que quedar algo como 
-# screen_height = <Alto de pantalla>
-# Despues modificas 'screen_ratio' al aspecto de tu pantalla. En la mayoria de monitores es de 16/9 
-# 
-# Por ejemplo, para poner una resolución de 1920*1080 tendrias que poner
-# screen_height = 1080 
-# screen_ratio = 16/9
-# 
-# Pueden deformarse más o menos los elementos del juego, pero es simplemente visual.
-# De todos modos, con dejar la relación predeterminada debería ser más que suficiente #
+# Para saber como instalar y cambiar ajustes, ver 'INSTALLATION.txt' #
 
-screen_height = 1000 # Altura de la pantalla: Valor predeterminado: 1000
-screen_ratio = 1 / 1 # Relación de aspecto de la pantalla: Valor predeterminado: 1/1
-
+import json
 import pygame
 from sys import exit
 from random import randint
+with open("Pong For 4/settings.json", "r") as file: settings_json = json.load(file)
 
 pygame.init()
 
-
-
-
-
 ### Screen variales ###
 
+screen_height = settings_json["screen_height"]
+screen_ratio = (settings_json["screen_ratio"]["numerator"]) / (settings_json["screen_ratio"]["denominator"])
 screen_width = screen_height * screen_ratio
 screen = pygame.display.set_mode((screen_width, screen_height))
 screen_rect = screen.get_rect()
 pygame.display.set_caption("Pong For 4")
+main_font = settings_json["font"]
 if screen_ratio < 1: 
         start_font_size = screen_width / 20
         instructions_font_size = screen_width / 50
 else:
         start_font_size = screen_height / 20
         instructions_font_size = screen_height / 50
-instructions_font = pygame.font.Font("Pong For 4/Font/ci-gamedev.ttf", int(instructions_font_size))
-start_font = pygame.font.Font("Pong For 4/Font/ci-gamedev.ttf", int(start_font_size))
+instructions_font = pygame.font.Font(main_font, int(instructions_font_size))
+start_font = pygame.font.Font(main_font, int(start_font_size))
 
 
 ### Functions ###
@@ -89,8 +77,7 @@ class moving_object:
                 self.acceleration_x = self.acceleration_y * screen_ratio
                 pass
 
-
-ball = moving_object("Pong For 4/Ball/White ball.png", screen_rect.centerx, screen_rect.centery)
+ball = moving_object(settings_json["ball_image"], screen_rect.centerx, screen_rect.centery)
 
 
 ### Player class ###
@@ -228,7 +215,7 @@ class player:
 
 class text_box:
         def __init__(self, text, x, y, font_size, color_value, display = False):
-                self.font = pygame.font.Font("Pong For 4/Font/ci-gamedev.ttf", font_size)
+                self.font = pygame.font.Font(main_font, font_size)
                 self.surf = self.font.render(text, False, color_value)
                 self.rect = self.surf.get_rect(center = (x, y))
                 self.display = display
@@ -236,37 +223,38 @@ class text_box:
                 pass
 
 ### Players
+
 white = player(
-        "Pong For 4/Players/White.png", # Player image
+        settings_json["players"]["white"]["image"], # Player image
         (screen_width / 10), screen_rect.centery, # Position
-        "Pong For 4/Barriers/White.png", # Shield image
+        settings_json["players"]["white"]["shield"], # Shield image
         "left", "W/S", # Position and controls
-        "White", # Color
+        settings_json["players"]["white"]["color"], # Color
         1, 0, 0 # Plays, wins, loses
 ) 
 green = player(
-        "Pong For 4/Players/Green.png", 
+        settings_json["players"]["green"]["image"],
         (screen_rect.right - (screen_width / 10)), screen_rect.centery, 
-        "Pong For 4/Barriers/Green.png", 
+        settings_json["players"]["green"]["shield"],
         "right", "Num 8/Num 2", 
-        "Green", 
+        settings_json["players"]["green"]["color"], 
         1, 0, 0
 )
 red = player(
-        "Pong For 4/Players/Red.png", 
+        settings_json["players"]["red"]["image"], 
         screen_rect.centerx, (screen_height / 10), 
-        "Pong For 4/Barriers/Red.png", 
+        settings_json["players"]["red"]["shield"], 
         "top", "N/M", 
-        "Red", 
+        settings_json["players"]["red"]["color"], 
         1, 0, 0
 )
 blue = player(
-        "Pong For 4/Players/Blue.png", 
+        settings_json["players"]["blue"]["image"], 
         screen_rect.centerx, 
         (screen_rect.bottom - (screen_height / 10)), 
-        "Pong For 4/Barriers/Blue.png", 
+        settings_json["players"]["blue"]["shield"], 
         "bottom", "Left/Right", 
-        "Blue", 
+        settings_json["players"]["blue"]["color"], 
         1, 0, 0
 )
 player_list = [white, red, green, blue]
@@ -382,7 +370,7 @@ while True:
                 screen.blit(ball.surf, ball.rect)
 
                 # Game_ending_variables #
-                if people_alive == 1 and people_playing > 1: 
+                if people_alive == settings_json["players_needed_to_end_match"] and people_playing > 1: 
                         for x in player_list:
                                 if x.alive == 1: x.win_count += 1
                                 if x.alive == 0 and x.plays == 1: x.lose_count += 1

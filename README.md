@@ -21,7 +21,6 @@ PROBLEMAS POTENCIALES
 - No hay una opción para pantalla completa
 - La variable "Game_ending_variable" solo puede ser accedida a través del código, 
 lo cual no es ideal para la mayoría de gente
-- El código es dificil de leer (es horrible)
 - La dificultad actual se siente injusta y aburrida
     - Hace que las rondas terminen más rápido, pero los jugadores no tienen ninguna oportunidad contra la bola
     - Como resultado, los que pierden primero juegan muy poco y se pueden aburrir
@@ -30,4 +29,4 @@ PROBLEMAS FUTUROS
 - Tener un solo modo de juego puede ser aburrido después de un tiempo
 - La falta de un modo de juego diseñado para menos jugadores podría dar menos accesibilidad para grupos más chicos de jugadores
 
-Ultima versión: 0.3 (31/10/2025)
+Ultima versión: 0.3.0.1 (01/11/2025)
