@@ -1,32 +1,44 @@
-Pong For 4 (WIP)
+# Pong For 4
 
-ESTAS LEYENDO EL README RELACIONADO AL GITHUB
-PARA VER INSTALACION ES RECOMENDABLE VER EL 'INSTALLATION.txt' DENTRO DE LA CARPETA 'Pong For 4'
+## Overview
+Pong For 4 is a personal videogame project developed as my first serious approach to **Object-Oriented Programming (OOP)** using Python and Pygame.
 
-DESCRIPCION
-Este juego es de los primeros que hice, apenas empece a programar. Como consecuencia de eso quedó medio abandonado, 
-por eso tiene bugs que nunca fueron arreglados, ademnás nunca consideré en compartirlo con nadie. 
-Sin embargo, eso cambió cuando aprendí de Front-End y decidí hacer 1MB Games. En un futuro voy a actualizar el juego para que al menos este presentable
-como el primer juego de 1MB Games
+The project was initially created as a private experiment and later published as part of my portfolio, alongside the **1MB Games** website.
 
-PROBLEMAS CONOCIDOS
-- No se puede abrir normal sin Visual Studio Code
-- No tiene audio
-- Es muy simple, le faltan mecanicas para hacerlo divertido
-- Le falta un menu para controlar opciones
-- Le falta una manera de salir del juego
+It is designed as a lightweight, low-resource local party game focused on simplicity rather than complex mechanics.
 
-PROBLEMAS POTENCIALES
-- La resolución es estática, lo cual no es ideal
-- No hay una opción para pantalla completa
-- La variable "Game_ending_variable" solo puede ser accedida a través del código, 
-lo cual no es ideal para la mayoría de gente
-- La dificultad actual se siente injusta y aburrida
-    - Hace que las rondas terminen más rápido, pero los jugadores no tienen ninguna oportunidad contra la bola
-    - Como resultado, los que pierden primero juegan muy poco y se pueden aburrir
+---
 
-PROBLEMAS FUTUROS
-- Tener un solo modo de juego puede ser aburrido después de un tiempo
-- La falta de un modo de juego diseñado para menos jugadores podría dar menos accesibilidad para grupos más chicos de jugadores
+## Features
+- Local multiplayer gameplay for up to 4 players
+- Object-oriented architecture (players, ball, game states)
+- Score tracking (singleplayer only)
+- External configuration using JSON files
 
-Ultima versión: 0.3.0.1 (01/11/2025)
+---
+
+## Technologies Used
+- **Python**
+- **Pygame**
+- **JSON** (configuration and data handling)
+
+---
+
+## Project Status
+The game is playable but still unfinished and considered an early-access prototype
+It is not under active development at the moment, as I am currently focusing on projects related to Back-End development and APIs.
+
+---
+
+## Known Limitations
+- Ball collisions with outer shield borders behave incorrectly under certain conditions
+- Visual assets are placeholder and may overlap in some scenarios
+- Missing features such as audio and in-game settings
+
+---
+
+## Author
+Developed entirely by me, **Lucas Vilche**.
+
+- GitHub: https://github.com/DarkSlayerV201  
+- LinkedIn: https://www.linkedin.com/in/lucas-nahuel-vilche-b29992259
